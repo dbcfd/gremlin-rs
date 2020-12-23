@@ -80,6 +80,16 @@ impl ToGValue for Bytecode {
     }
 }
 
+impl<T> ToGValue for Option<T> where T: ToGValue {
+    fn to_gvalue(&self) -> GValue {
+        if let Some(v) = self {
+            v.to_gvalue()
+        } else {
+            GValue::Null
+        }
+    }
+}
+
 // Take from GValue
 
 #[doc(hidden)]
@@ -159,6 +169,16 @@ impl<T: FromGValue> FromGValue for Vec<T> {
                 "Cannot convert {:?} to List of T",
                 v
             ))),
+        }
+    }
+}
+
+impl<T: FromGValue> FromGValue for Option<T> {
+    fn from_gvalue(v: GValue) -> GremlinResult<Option<T>> {
+        if let GValue::Null = v {
+            Ok(None)
+        } else {
+            T::from_gvalue(v).map(Some)
         }
     }
 }
