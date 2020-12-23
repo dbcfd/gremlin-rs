@@ -419,8 +419,7 @@ fn test_group_count_edge() {
 #[cfg(feature = "derive")]
 fn test_vertex_mapping() {
     let graph = graph();
-    use gremlin_client::derive::FromGValue;
-    use std::convert::TryFrom;
+    use gremlin_client::FromGValue;
 
     let q = r#"
     g.addV('person')
@@ -456,7 +455,8 @@ fn test_vertex_mapping() {
         name: String,
         age: i32,
         time: i64,
-        optional: Option<String>,
+        optional_a: Option<String>,
+        optional_b: Option<i32>,
     }
 
     assert_eq!("person", mark[0].label());
@@ -465,7 +465,7 @@ fn test_vertex_mapping() {
         .execute("g.V(identity).valueMap()", &[("identity", mark[0].id())])
         .expect("should fetch valueMap with properties")
         .filter_map(Result::ok)
-        .map(|f| Person::try_from(f))
+        .map(|f| Person::from_gvalue(f))
         .collect::<Result<Vec<Person>, _>>()
         .expect("It should be ok");
 
@@ -476,7 +476,8 @@ fn test_vertex_mapping() {
             name: String::from("mark"),
             age: 22,
             time: 22,
-            optional: None
+            optional_a: None,
+            optional_b: None,
         },
         value_map[0]
     );

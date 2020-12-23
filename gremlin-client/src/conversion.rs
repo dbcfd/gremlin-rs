@@ -90,9 +90,12 @@ impl<T> ToGValue for Option<T> where T: ToGValue {
     }
 }
 
-// Take from GValue
+// Take from GMap
+pub trait FromGMap: Sized {
+    fn from_gmap(v: Map) -> GremlinResult<Self>;
+}
 
-#[doc(hidden)]
+// Take from GValue
 pub trait FromGValue: Sized {
     fn from_gvalue(v: GValue) -> GremlinResult<Self>;
 }
@@ -155,7 +158,16 @@ impl FromGValue for GValue {
         Ok(v)
     }
 }
-// Borrow from GValue
+
+impl<T: FromGValue> FromGValue for Option<T> {
+    fn from_gvalue(v: GValue) -> GremlinResult<Option<T>> {
+        if let GValue::Null = v {
+            Ok(None)
+        } else {
+            T::from_gvalue(v).map(Some)
+        }
+    }
+}
 
 impl<T: FromGValue> FromGValue for Vec<T> {
     fn from_gvalue(v: GValue) -> GremlinResult<Vec<T>> {
@@ -169,16 +181,6 @@ impl<T: FromGValue> FromGValue for Vec<T> {
                 "Cannot convert {:?} to List of T",
                 v
             ))),
-        }
-    }
-}
-
-impl<T: FromGValue> FromGValue for Option<T> {
-    fn from_gvalue(v: GValue) -> GremlinResult<Option<T>> {
-        if let GValue::Null = v {
-            Ok(None)
-        } else {
-            T::from_gvalue(v).map(Some)
         }
     }
 }

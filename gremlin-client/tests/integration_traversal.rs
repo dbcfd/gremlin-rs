@@ -1951,7 +1951,7 @@ fn test_traversal_vertex_mapping() {
         uuid: uuid::Uuid,
         optional: Option<String>,
     }
-    let person = Person::try_from(mark.unwrap().unwrap());
+    let person = Person::from_gvalue(mark.unwrap().unwrap());
     assert_eq!(person.is_ok(), true);
 
     assert_eq!(

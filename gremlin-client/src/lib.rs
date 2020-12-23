@@ -123,7 +123,7 @@ mod pool;
 
 pub use client::GremlinClient;
 pub use connection::{ConnectionOptions, TlsOptions};
-pub use conversion::{BorrowFromGValue, FromGValue, ToGValue};
+pub use conversion::{BorrowFromGValue, FromGMap, FromGValue, ToGValue};
 pub use error::GremlinError;
 pub use io::GraphSON;
 pub use message::Message;
@@ -143,7 +143,8 @@ pub mod structure;
 pub mod utils;
 
 #[cfg(feature = "derive")]
-pub mod derive {
-    pub use gremlin_derive::FromGMap;
-    pub use gremlin_derive::FromGValue;
-}
+#[allow(unused)]
+#[macro_use]
+extern crate gremlin_derive;
+#[cfg(feature = "derive")]
+pub use gremlin_derive::*;

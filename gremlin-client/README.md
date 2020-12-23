@@ -193,10 +193,8 @@ which you can use to derive the mapping from GMap and GValue (only Map currently
 with `GValue`
 
 ```rust
-use gremlin_client::derive::{FromGMap, FromGValue};
 use gremlin_client::process::traversal::traversal;
-use gremlin_client::GremlinClient;
-use std::convert::TryFrom;
+use gremlin_client::{FromGMap, FromGValue, GremlinClient};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = GremlinClient::connect("localhost")?;
@@ -209,7 +207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let results = client
         .execute("g.V(param).valueMap()", &[("param", &1)])?
         .filter_map(Result::ok)
-        .map(|f| Person::try_from(f))
+        .map(|f| Person::from_gvalue(f))
         .collect::<Result<Vec<Person>, _>>()?;
 
     println!("Person {:?}", results[0);
@@ -241,7 +239,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .value_map(())
         .iter()?
         .filter_map(Result::ok)
-        .map(Person::try_from)
+        .map(Person::from_gvalue)
         .collect::<Result<Vec<Person>, _>>()?;
 
     println!("Person {:?}", results[0);

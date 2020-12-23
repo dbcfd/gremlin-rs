@@ -1,6 +1,6 @@
 use crate::error::GremlinError;
 use crate::structure::{Edge, GValue, Vertex};
-use crate::GremlinResult;
+use crate::{GremlinResult, FromGValue};
 use crate::Token;
 use std::collections::hash_map::IntoIter;
 use std::collections::{BTreeMap, HashMap};
@@ -60,13 +60,13 @@ impl Map {
     pub fn try_get<K, V>(&self, key: K) -> GremlinResult<V>
     where
         K: Into<GKey>,
-        V: std::convert::TryFrom<GValue, Error = GremlinError>,
+        V: FromGValue,
     {
         self.0
             .get(&key.into())
             .cloned()
             .or_else(|| Some(GValue::Null))
-            .map(V::try_from)
+            .map(V::from_gvalue)
             .ok_or_else(|| GremlinError::Cast(String::from("field not found")))?
     }
 

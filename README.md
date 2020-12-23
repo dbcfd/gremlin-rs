@@ -262,7 +262,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let results = client
         .execute("g.V(param).valueMap()", &[("param", &1)])?
         .filter_map(Result::ok)
-        .map(|f| Person::try_from(f))
+        .map(Persom::from_gvalue)
         .collect::<Result<Vec<Person>, _>>()?;
 
     println!("Person {:?}", results[0);
@@ -294,7 +294,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .value_map(())
         .iter()?
         .filter_map(Result::ok)
-        .map(Person::try_from)
+        .map(Person::from_gvalue)
         .collect::<Result<Vec<Person>, _>>()?;
 
     println!("Person {:?}", results[0);

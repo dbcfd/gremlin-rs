@@ -388,23 +388,3 @@ where
         ))),
     }
 }
-
-// Optional
-
-macro_rules! impl_try_from_option {
-    ($t:ty) => {
-        impl std::convert::TryFrom<GValue> for Option<$t> {
-            type Error = crate::GremlinError;
-
-            fn try_from(value: GValue) -> GremlinResult<Self> {
-                if let GValue::Null = value {
-                    return Ok(None);
-                }
-                let res = value.try_into()?;
-                Ok(res)
-            }
-        }
-    };
-}
-
-impl_try_from_option!(String);

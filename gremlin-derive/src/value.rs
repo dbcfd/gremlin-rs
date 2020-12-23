@@ -12,12 +12,8 @@ pub fn derive(input: &DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
             let (m_reads, m_names) = map_properties(named);
 
             Ok(quote! {
-
-                impl std::convert::TryFrom<gremlin_client::GValue> for #ident {
-                    type Error = gremlin_client::GremlinError;
-                    fn try_from(result : gremlin_client::GValue) -> gremlin_client::GremlinResult<Self>{
-
-
+                impl FromGValue for #ident {
+                    fn from_gvalue(result: gremlin_client::GValue) -> gremlin_client::GremlinResult<Self> {
                         match result {
                             gremlin_client::GValue::Map(map) => {
                                 #(#m_reads)*
@@ -54,7 +50,6 @@ pub fn derive_map(input: &DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
             let (m_reads, m_names) = map_properties(named);
 
             Ok(quote! {
-
                 impl std::convert::TryFrom<gremlin_client::Map> for #ident {
                     type Error = gremlin_client::GremlinError;
                     fn try_from(map : gremlin_client::Map) -> gremlin_client::GremlinResult<Self>{
